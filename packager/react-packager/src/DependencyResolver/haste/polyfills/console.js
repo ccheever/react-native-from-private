@@ -17,6 +17,8 @@
 (function(global) {
   'use strict';
 
+  var replConsole = console;
+
   var OBJECT_COLUMN_NAME = '(index)';
   var LOG_LEVELS = {
     trace: 0,
@@ -34,6 +36,33 @@
 
     function getNativeLogFunction(level) {
       return function() {
+
+        var args = Array.prototype.splice.call(arguments, 0) ;
+
+        switch (level) {
+
+          case LOG_LEVELS.trace:
+            replConsole.trace.apply(replConsole, args);
+            break;
+
+          case LOG_LEVELS.log:
+            replConsole.log.apply(replConsole, args);
+            break;
+
+          case LOG_LEVELS.info:
+            replConsole.info.apply(replConsole, args);
+            break;
+
+          case LOG_LEVELS.warn:
+            replConsole.warn.apply(replConsole, args);
+            break;
+
+          case LOG_LEVELS.error:
+            replConsole.error.apply(replConsole, args);
+            break;
+
+        }
+
         var str = Array.prototype.map.call(arguments, function(arg) {
           if (arg == null) {
             return arg === null ? 'null' : 'undefined';
@@ -132,7 +161,8 @@
       log: getNativeLogFunction(LOG_LEVELS.log),
       warn: getNativeLogFunction(LOG_LEVELS.warn),
       trace: getNativeLogFunction(LOG_LEVELS.trace),
-      table: consoleTablePolyfill
+      table: consoleTablePolyfill,
+      _replConsole: replConsole
     };
 
   }
